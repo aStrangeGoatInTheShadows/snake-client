@@ -1,19 +1,20 @@
 const net = require('net');
+const config = require('./constants');
 
 /**
  * Establishes connection with the game server
  */
 const connect = function () {
   const client = net.createConnection({
-    host: 'localhost',
-    port: 50541
+    host: config.host,
+    port: config.port
   });
 
   // interpret incoming data as text
   client.setEncoding('utf8');
 
   client.on('connect', () => {
-    console.log('Successfully connected to server.');
+    console.log('Successfully connected to server.');   
 
     // Naming our snek Mat
     client.write('Name: Mat');
@@ -32,3 +33,4 @@ const connect = function () {
 }
 
 module.exports = connect;
+

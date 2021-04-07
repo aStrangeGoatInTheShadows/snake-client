@@ -1,5 +1,8 @@
 const connect = require('./client');
+const config = require('./constants');
 const log = console.log;
+let server = connect();
+let handleUserInput = process.stdin;
 
 /**
  * Setup User Interface 
@@ -13,19 +16,14 @@ const setupInput = function () {
   return stdin;
 }
 
-let playerDirection = [
-  'Move: up',
-  'Move: left',
-  'Move: down',
-  'Move: right'
-];
-
-server = connect();
-handleUserInput = setupInput();
+// currentFunction is the snake roaming around the game 
+let currentFunction;  // Credit @DavidM for adding logic insight
+let direct = 0;
 
 handleUserInput.on('data', (playerMove) => {
-  let direct = 0;
-  clearInterval(keyPress);
+
+  clearInterval(currentFunction); // Credit @LukePenner for adding logic insight
+
   switch (playerMove) {
     case 'w': direc = 0;
       break;
@@ -37,25 +35,16 @@ handleUserInput.on('data', (playerMove) => {
       break;
     case '\u0003': log('Toodles!');
       process.exit();
-    default: return null;
+    default: sendMessage(playerMove);
   }
-  let keyPress = setInterval(() => { server.write(playerDirection[direc]) }, 100);
+  currentFunction = setInterval(() => { server.write(config.playerDirection[direc])}, 50);
 });
+
+const sendMessage = (msgToSend) => {
+  server.write(`Say: ${config.messages[msgToSend]}`);
+  return null;
+}
 
 module.exports = {
   setupInput
 }
-// ///////////////////////////////////////// FROM DAVID M ////////////////////////////////////
-// just paste a bit here:
-// const setupInput = function(conn) {
-//   connection = conn;
-//   const stdin = process.stdin;
-//   let keyPress;
-
-//   const handleUserInput = function() {
-//     stdin.on('data', (key) => {
-//       clearInterval(keyPress);
-//       if (key === '\u0003') {
-//         process.exit();
-//       } else if (INPUTS[key] !== undefined) {
-//         keyPress = setInterval(() => connection.write(INPUTS[key]), 100);
