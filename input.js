@@ -1,25 +1,24 @@
-
-
+const  connect = require('./client');
+const log = console.log;
 
 /**
  * Setup User Interface 
  * Specifically, so that we can handle user input via stdin
  */
-const setupInput = function() {
+const setupInput = function(conn) { 
+  conn();
+
   const stdin = process.stdin;
   stdin.setRawMode(true);
   stdin.setEncoding('utf8');
   stdin.resume();
+  handleUserInput(conn);
   return stdin;
 }
 
-handleUserInput = setupInput();
-
-const log = console.log;
-
 handleUserInput.on('data', (playerMove)=>{
   switch (playerMove) {
-    case 'w' : log ('You went up');
+    case 'w' : conn.write('Move: up');
       break;
     case 'a' : log('You went left');
       break; 
